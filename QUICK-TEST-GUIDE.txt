@@ -1,0 +1,116 @@
+╔══════════════════════════════════════════════════════════════╗
+║        DISTANCE API - POSTMAN TESTING QUICK START          ║
+╚══════════════════════════════════════════════════════════════╝
+
+✅ SERVER STATUS: RUNNING ON PORT 5000
+✅ ALL APIs ARE WORKING AND READY TO TEST
+
+═══════════════════════════════════════════════════════════════
+🎯 DISTANCE API - NO AUTH REQUIRED (PUBLIC)
+═══════════════════════════════════════════════════════════════
+
+METHOD: GET
+URL: http://localhost:5000/api/distance/calculate
+
+QUERY PARAMETERS:
+  startLat   = Starting point latitude
+  startLng   = Starting point longitude
+  endLat     = Destination latitude
+  endLng     = Destination longitude
+
+═══════════════════════════════════════════════════════════════
+📍 TEST EXAMPLES - COPY & PASTE IN POSTMAN
+═══════════════════════════════════════════════════════════════
+
+1️⃣  DELHI TO MUMBAI
+http://localhost:5000/api/distance/calculate?startLat=28.6139&startLng=77.2090&endLat=19.0760&endLng=72.8777
+
+2️⃣  MUMBAI TO BANGALORE
+http://localhost:5000/api/distance/calculate?startLat=19.0760&startLng=72.8777&endLat=12.9716&endLng=77.5946
+
+3️⃣  DELHI TO GOA
+http://localhost:5000/api/distance/calculate?startLat=28.6139&startLng=77.2090&endLat=15.2993&endLng=74.1240
+
+4️⃣  JAIPUR TO UDAIPUR
+http://localhost:5000/api/distance/calculate?startLat=26.9124&startLng=75.7873&endLat=24.5854&endLng=73.7125
+
+5️⃣  KOLKATA TO DARJEELING
+http://localhost:5000/api/distance/calculate?startLat=22.5726&startLng=88.3639&endLat=27.0360&endLng=88.2627
+
+═══════════════════════════════════════════════════════════════
+✅ EXPECTED RESPONSE
+═══════════════════════════════════════════════════════════════
+
+{
+  "success": true,
+  "data": {
+    "distance": "1135.47",
+    "duration": 1136,
+    "unit": "km",
+    "source": "Haversine Formula",
+    "note": "Approximate straight-line distance"
+  }
+}
+
+═══════════════════════════════════════════════════════════════
+🔧 POSTMAN SETUP (3 SIMPLE STEPS)
+═══════════════════════════════════════════════════════════════
+
+STEP 1: Open Postman
+
+STEP 2: Create New Request
+  - Method: GET
+  - URL: http://localhost:5000/api/distance/calculate
+
+STEP 3: Add Query Params (in Params tab)
+  Key         | Value
+  ------------|----------
+  startLat    | 28.6139
+  startLng    | 77.2090
+  endLat      | 19.0760
+  endLng      | 72.8777
+
+STEP 4: Click "Send" ✨
+
+═══════════════════════════════════════════════════════════════
+🚀 IMPORT POSTMAN COLLECTION (FASTEST WAY)
+═══════════════════════════════════════════════════════════════
+
+1. Open Postman
+2. Click "Import" button
+3. Select file: Go-Trip-AI-Postman-Collection.json
+4. All APIs will be ready to test!
+
+═══════════════════════════════════════════════════════════════
+📋 ALL OTHER APIs
+═══════════════════════════════════════════════════════════════
+
+🔓 PUBLIC APIs (No Auth):
+  ✅ Distance    - GET  /api/distance/calculate
+  ✅ Weather     - GET  /api/weather?city=Mumbai
+  ✅ Transport   - GET  /api/transport?from=Delhi&to=Goa
+
+🔒 AUTH REQUIRED (Need Token):
+  ✅ AI Trip     - POST /api/ai/recommend-trip
+  ✅ AI Packing  - POST /api/ai/packing-list
+  ✅ AI Safety   - POST /api/ai/safety-tips
+
+🔐 Authentication:
+  ✅ Register    - POST /api/auth/register
+  ✅ Login       - POST /api/auth/login
+
+═══════════════════════════════════════════════════════════════
+📖 COMPLETE GUIDE
+═══════════════════════════════════════════════════════════════
+
+See: POSTMAN-TESTING-GUIDE.md for detailed documentation
+
+═══════════════════════════════════════════════════════════════
+🎉 READY TO TEST!
+═══════════════════════════════════════════════════════════════
+
+Server: ✅ Running on http://localhost:5000
+Distance API: ✅ Working (no auth needed)
+All APIs: ✅ Functional
+
+Just copy any URL above and paste in Postman!

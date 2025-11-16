@@ -1,8 +1,13 @@
-const axios = require('axios');
+const { GoogleGenAI } = require('@google/genai');
 const Trip = require('../models/Trip');
 
-// Gemini AI Configuration
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+// Initialize Google GenAI client
+let ai;
+if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+  ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+}
 
 // @desc    Get AI trip recommendations
 // @route   POST /api/ai/recommend-trip
@@ -50,23 +55,23 @@ Make it practical and realistic.`;
 
     let recommendation;
 
-    // Try Gemini AI if API key is available
-    if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+    // Try Google GenAI if initialized
+    if (ai) {
       try {
         recommendation = await callGeminiAPI(prompt, 'recommendation');
       } catch (apiError) {
-        console.warn('Gemini AI failed, using enhanced fallback:', apiError.message);
+        console.warn('Google GenAI failed, using enhanced fallback:', apiError.message);
         recommendation = generateEnhancedRecommendation(budget, place, days, travelStyle, companions);
       }
     } else {
-      console.log('Using enhanced fallback data - Gemini API key not configured');
+      console.log('Using enhanced fallback data - Google GenAI not configured');
       recommendation = generateEnhancedRecommendation(budget, place, days, travelStyle, companions);
     }
 
     res.json({
       success: true,
       data: recommendation,
-      source: GEMINI_API_KEY ? 'Gemini AI' : 'Enhanced Fallback Data'
+      source: ai ? 'Google GenAI (Gemini 2.0)' : 'Enhanced Fallback Data'
     });
 
   } catch (error) {
@@ -118,8 +123,8 @@ Make it practical and tailored to the destination.`;
 
     let packingList;
 
-    // Try Gemini AI if API key is available
-    if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+    // Try Google GenAI if initialized
+    if (ai) {
       try {
         const aiResponse = await callGeminiAPI(prompt, 'packing');
         // Convert array to object with completed status for frontend
@@ -132,18 +137,18 @@ Make it practical and tailored to the destination.`;
         });
         packingList = formattedPackingList;
       } catch (apiError) {
-        console.warn('Gemini AI failed, using enhanced fallback:', apiError.message);
+        console.warn('Google GenAI failed, using enhanced fallback:', apiError.message);
         packingList = generateEnhancedPackingList(destination, days, season, activities, budget);
       }
     } else {
-      console.log('Using enhanced fallback data - Gemini API key not configured');
+      console.log('Using enhanced fallback data - Google GenAI not configured');
       packingList = generateEnhancedPackingList(destination, days, season, activities, budget);
     }
 
     res.json({
       success: true,
       data: packingList,
-      source: GEMINI_API_KEY ? 'Gemini AI' : 'Enhanced Fallback Data'
+      source: ai ? 'Google GenAI (Gemini 2.0)' : 'Enhanced Fallback Data'
     });
 
   } catch (error) {
@@ -195,23 +200,23 @@ Make the tips practical and specific.`;
 
     let safetyTips;
 
-    // Try Gemini AI if API key is available
-    if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+    // Try Google GenAI if initialized
+    if (ai) {
       try {
         safetyTips = await callGeminiAPI(prompt, 'safety');
       } catch (apiError) {
-        console.warn('Gemini AI failed, using enhanced fallback:', apiError.message);
+        console.warn('Google GenAI failed, using enhanced fallback:', apiError.message);
         safetyTips = generateEnhancedSafetyTips(destination, travelStyle, companions, season);
       }
     } else {
-      console.log('Using enhanced fallback data - Gemini API key not configured');
+      console.log('Using enhanced fallback data - Google GenAI not configured');
       safetyTips = generateEnhancedSafetyTips(destination, travelStyle, companions, season);
     }
 
     res.json({
       success: true,
       data: safetyTips,
-      source: GEMINI_API_KEY ? 'Gemini AI' : 'Enhanced Fallback Data'
+      source: ai ? 'Google GenAI (Gemini 2.0)' : 'Enhanced Fallback Data'
     });
 
   } catch (error) {
@@ -232,57 +237,38 @@ Make the tips practical and specific.`;
   }
 };
 
-// Gemini AI API Caller
+// Gemini AI API Caller using Google GenAI SDK
 async function callGeminiAPI(prompt, type) {
-  if (!GEMINI_API_KEY) {
+  if (!ai) {
     throw new Error('Gemini API key not configured');
   }
 
   try {
-    const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt
-              }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: type === 'recommendation' ? 2000 : 1000,
-        }
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        timeout: 30000
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-lite',
+      contents: prompt,
+      config: {
+        temperature: 0.7,
+        maxOutputTokens: type === 'recommendation' ? 2000 : 1000,
+        responseMimeType: 'application/json'
       }
-    );
+    });
 
-    if (response.data && response.data.candidates && response.data.candidates[0]) {
-      const responseText = response.data.candidates[0].content.parts[0].text;
+    const responseText = response.text;
+    
+    // Try to parse JSON from the response
+    try {
+      // Extract JSON from markdown code blocks if present
+      const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) || responseText.match(/```\n([\s\S]*?)\n```/);
+      const jsonString = jsonMatch ? jsonMatch[1] : responseText;
       
-      // Try to parse JSON from the response
-      try {
-        // Extract JSON from markdown code blocks if present
-        const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) || responseText.match(/```\n([\s\S]*?)\n```/);
-        const jsonString = jsonMatch ? jsonMatch[1] : responseText;
-        
-        return JSON.parse(jsonString);
-      } catch (parseError) {
-        console.warn('Failed to parse Gemini response as JSON, using fallback:', parseError.message);
-        throw new Error('Invalid JSON response from Gemini');
-      }
-    } else {
-      throw new Error('Invalid response from Gemini API');
+      return JSON.parse(jsonString);
+    } catch (parseError) {
+      console.warn('Failed to parse Gemini response as JSON, using fallback:', parseError.message);
+      throw new Error('Invalid JSON response from Gemini');
     }
   } catch (error) {
-    console.error('Gemini API call failed:', error.response?.data || error.message);
+    console.error('Gemini API call failed:', error.message);
     throw error;
   }
 }

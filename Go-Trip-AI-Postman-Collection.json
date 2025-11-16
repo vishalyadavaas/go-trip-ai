@@ -1,0 +1,350 @@
+{
+  "info": {
+    "name": "Go Trip AI - All APIs",
+    "description": "Complete API collection for Go Trip AI application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 201\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has token\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('token');",
+                  "    pm.environment.set(\"authToken\", jsonData.token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Save auth token\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('token');",
+                  "    pm.environment.set(\"authToken\", jsonData.token);",
+                  "    console.log(\"Token saved:\", jsonData.token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Distance API",
+      "item": [
+        {
+          "name": "Delhi to Mumbai",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/distance/calculate?startLat=28.6139&startLng=77.2090&endLat=19.0760&endLng=72.8777",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "distance", "calculate"],
+              "query": [
+                { "key": "startLat", "value": "28.6139", "description": "Delhi Latitude" },
+                { "key": "startLng", "value": "77.2090", "description": "Delhi Longitude" },
+                { "key": "endLat", "value": "19.0760", "description": "Mumbai Latitude" },
+                { "key": "endLng", "value": "72.8777", "description": "Mumbai Longitude" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has distance data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.have.property('distance');",
+                  "    pm.expect(jsonData.data).to.have.property('duration');",
+                  "    pm.expect(jsonData.data).to.have.property('unit');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mumbai to Bangalore",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/distance/calculate?startLat=19.0760&startLng=72.8777&endLat=12.9716&endLng=77.5946",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "distance", "calculate"],
+              "query": [
+                { "key": "startLat", "value": "19.0760" },
+                { "key": "startLng", "value": "72.8777" },
+                { "key": "endLat", "value": "12.9716" },
+                { "key": "endLng", "value": "77.5946" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delhi to Goa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/distance/calculate?startLat=28.6139&startLng=77.2090&endLat=15.2993&endLng=74.1240",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "distance", "calculate"],
+              "query": [
+                { "key": "startLat", "value": "28.6139" },
+                { "key": "startLng", "value": "77.2090" },
+                { "key": "endLat", "value": "15.2993" },
+                { "key": "endLng", "value": "74.1240" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Weather API",
+      "item": [
+        {
+          "name": "Weather - Mumbai",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather?city=Mumbai",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "weather"],
+              "query": [
+                { "key": "city", "value": "Mumbai" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Weather - Delhi",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather?city=Delhi",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "weather"],
+              "query": [
+                { "key": "city", "value": "Delhi" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Weather - Goa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather?city=Goa",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "weather"],
+              "query": [
+                { "key": "city", "value": "Goa" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transport API",
+      "item": [
+        {
+          "name": "Transport - Delhi to Goa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transport?from=Delhi&to=Goa",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transport"],
+              "query": [
+                { "key": "from", "value": "Delhi" },
+                { "key": "to", "value": "Goa" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Transport - Mumbai to Bangalore",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transport?from=Mumbai&to=Bangalore",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transport"],
+              "query": [
+                { "key": "from", "value": "Mumbai" },
+                { "key": "to", "value": "Bangalore" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI APIs",
+      "item": [
+        {
+          "name": "AI Trip Recommendations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"budget\": \"medium\",\n  \"place\": \"Goa\",\n  \"days\": 5,\n  \"travelStyle\": \"adventure\",\n  \"companions\": \"friends\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/recommend-trip",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ai", "recommend-trip"]
+            }
+          }
+        },
+        {
+          "name": "AI Packing List",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destination\": \"Goa\",\n  \"days\": 5,\n  \"season\": \"summer\",\n  \"activities\": [\"beach\", \"water sports\", \"sightseeing\"],\n  \"budget\": \"medium\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/packing-list",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ai", "packing-list"]
+            }
+          }
+        },
+        {
+          "name": "AI Safety Tips",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destination\": \"Goa\",\n  \"travelStyle\": \"adventure\",\n  \"companions\": \"friends\",\n  \"season\": \"summer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/safety-tips",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ai", "safety-tips"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

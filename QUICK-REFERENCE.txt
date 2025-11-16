@@ -1,0 +1,124 @@
+╔══════════════════════════════════════════════════════════════╗
+║         GOOGLE GENAI INTEGRATION - QUICK REFERENCE          ║
+╚══════════════════════════════════════════════════════════════╝
+
+📍 BASE URL: http://localhost:5000
+
+═══════════════════════════════════════════════════════════════
+🔐 AUTHENTICATION
+═══════════════════════════════════════════════════════════════
+
+Register:
+  POST /api/auth/register
+  Body: {"name":"Test User","email":"test@example.com","password":"password123"}
+
+Login:
+  POST /api/auth/login
+  Body: {"email":"test@example.com","password":"password123"}
+  
+  → Copy the token from response
+
+═══════════════════════════════════════════════════════════════
+🤖 AI ENDPOINTS (Require Authentication)
+═══════════════════════════════════════════════════════════════
+
+1️⃣  TRIP RECOMMENDATIONS
+    POST /api/ai/recommend-trip
+    Headers: Authorization: Bearer YOUR_TOKEN
+    Body: {
+      "budget": "medium",
+      "place": "Paris",
+      "days": 5,
+      "travelStyle": "adventure",
+      "companions": "friends"
+    }
+
+2️⃣  PACKING LIST
+    POST /api/ai/packing-list
+    Headers: Authorization: Bearer YOUR_TOKEN
+    Body: {
+      "destination": "Tokyo",
+      "days": 7,
+      "season": "winter",
+      "activities": ["sightseeing", "shopping"],
+      "budget": "medium"
+    }
+
+3️⃣  SAFETY TIPS
+    POST /api/ai/safety-tips
+    Headers: Authorization: Bearer YOUR_TOKEN
+    Body: {
+      "destination": "Bangkok",
+      "travelStyle": "adventure",
+      "companions": "solo",
+      "season": "summer"
+    }
+
+═══════════════════════════════════════════════════════════════
+⚡ QUICK TEST COMMANDS
+═══════════════════════════════════════════════════════════════
+
+# Start server
+npm start
+
+# Get auth token
+node test-ai.js login
+
+# Export token
+export AUTH_TOKEN="paste_token_here"
+
+# Test endpoints
+node test-ai.js recommend
+node test-ai.js packing
+node test-ai.js safety
+
+# Test all
+node test-ai.js all
+
+═══════════════════════════════════════════════════════════════
+🔑 SETUP CHECKLIST
+═══════════════════════════════════════════════════════════════
+
+[ ] Create .env file (copy from .env.example)
+[ ] Add GEMINI_API_KEY (get from https://aistudio.google.com/apikey)
+[ ] Add MONGODB_URI
+[ ] Add JWT_SECRET
+[ ] Start server: npm start
+[ ] Test login: node test-ai.js login
+[ ] Test AI endpoints
+
+═══════════════════════════════════════════════════════════════
+📦 FILES CREATED
+═══════════════════════════════════════════════════════════════
+
+✓ controllers/aiController.js  - Updated with Google GenAI SDK
+✓ test-ai.js                   - Interactive test script
+✓ test-ai-endpoints.md         - Complete API documentation
+✓ .env.example                 - Environment template
+✓ INTEGRATION-SUMMARY.md       - Detailed integration guide
+✓ QUICK-REFERENCE.txt          - This file
+
+═══════════════════════════════════════════════════════════════
+🎯 IMPLEMENTATION DETAILS
+═══════════════════════════════════════════════════════════════
+
+SDK:     @google/genai v1.29.1
+Model:   gemini-2.0-flash-exp
+Format:  JSON (via responseMimeType)
+Auth:    JWT Bearer Token
+Fallback: Enhanced static data
+
+═══════════════════════════════════════════════════════════════
+📚 DOCUMENTATION LINKS
+═══════════════════════════════════════════════════════════════
+
+Google GenAI SDK:
+  https://googleapis.github.io/js-genai/
+
+Get API Key:
+  https://aistudio.google.com/apikey
+
+Detailed Docs:
+  See test-ai-endpoints.md in project root
+
+═══════════════════════════════════════════════════════════════
